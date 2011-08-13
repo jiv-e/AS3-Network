@@ -19,8 +19,7 @@ package fi.validi.network.model.model2d {
 		}
 		
 		public function createNode2D(xProportional : Number, yProportional : Number) : INode {
-			initNodeCreation(new Node2D(xProportional, yProportional, createSingleNetworkVector()));			
-			return createdNode;
+			return initNodeCreation(new Node2D(xProportional, yProportional, createSingleNetworkVector()));			
 		}
 	}
 }

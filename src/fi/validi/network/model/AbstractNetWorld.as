@@ -10,9 +10,6 @@ package fi.validi.network.model {
 		protected var _networks : Vector.<INetwork>;
 		protected var _nodes : Vector.<INode>;
 		protected var _edges : Vector.<IEdge>;
-		protected var _createdNode : INode;
-		protected var _createdEdge : IEdge;
-		protected var _createdNetwork : INetwork;
 		
 		public function AbstractNetWorld() {
 			_nodes = new Vector.<INode>;
@@ -30,21 +27,13 @@ package fi.validi.network.model {
 		
 		public function createNetwork() : INetwork {
 			var createdNetwork : Network = new Network();
-			_networks.push(_createdNetwork);
+			_networks.push(createdNetwork);
 			dispatchEvent(new NetWorldEvent(NetWorldEvent.NETWORK_CREATED, createdNetwork));
 			return createdNetwork;
 		}
 
 		public function get nodes() : Vector.<INode> {
 			return _nodes;
-		}
-
-		public function get createdNode() : INode {
-			return _createdNode;
-		}
-
-		public function get createdEdge() : IEdge {
-			return _createdEdge;
 		}
 
 		public function get edges() : Vector.<IEdge> {
@@ -96,9 +85,10 @@ package fi.validi.network.model {
 			return networkVector;
 		}
 
-		protected function initNodeCreation(node : INode) : void {			
+		protected function initNodeCreation(node : INode) : INode {			
 			_nodes.push(node);
 			dispatchEvent(new NetWorldEvent(NetWorldEvent.NODE_CREATED, node));
+			return node;
 		}
 		
 		private function destroyNetwork(network : INetwork) : void {
