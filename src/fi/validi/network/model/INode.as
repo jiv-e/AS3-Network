@@ -3,6 +3,7 @@ package fi.validi.network.model {
 	 * @author Juho Viitasalo
 	 */
 	public interface INode extends INetObject {
+
 		//Remove all connected edges
 		function detatch() : void;		
 //		function connect(edge : IEdge, connectionType : String) : void;

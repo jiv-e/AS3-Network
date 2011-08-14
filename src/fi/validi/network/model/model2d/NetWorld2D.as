@@ -1,4 +1,5 @@
 package fi.validi.network.model.model2d {
+	import fi.validi.network.model.NodeEvent;
 	import fi.validi.network.model.NetWorldEvent;
 	import fi.validi.network.model.AbstractNetWorld;
 	import fi.validi.network.model.Edge;

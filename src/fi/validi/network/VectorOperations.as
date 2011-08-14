@@ -6,6 +6,14 @@ package fi.validi.network {
 	 */
 	public class VectorOperations {
 		public static function difference(substractFrom : Vector.<INetObject>, substracted : Vector.<INetObject>) : Vector.<INetObject> {
+			if(substractFrom.length == 0) {
+				trace("Error: Vector 'substractFrom' is empty.");
+				return substractFrom;
+			}
+			else if (substracted.length == 0) {
+				trace("Error: Vector 'substracted' is empty.");
+				return substractFrom;
+			}
 			substractFrom.sort(compare);
 			substracted.sort(compare);
 			var difference : Vector.<INetObject> = new Vector.<INetObject>();
@@ -61,6 +69,23 @@ package fi.validi.network {
 			if(x.ID < y.ID) return -1;
 			else if(x.ID > y.ID) return 1;
 			else return 0;
+		}
+		
+		public static function isEqual(vector1 : Vector.<INetObject>, vector2 : Vector.<INetObject>) : Boolean {
+			if(!vector2 && !vector1) {
+				return true;      
+			}
+			if(!vector2 || !vector1) {  
+				return false;      
+			}
+			if(vector1.length != vector2.length) {   
+				return false;
+			}
+			for(var i:uint = 0; i < vector1.length; i++) {              
+				if(vector1[i] != vector2[i])  
+				return false; 
+			}          
+			return true; 
 		}
 	}
 }

@@ -17,17 +17,18 @@ package fi.validi.network.view.view2d {
 			_data.addEventListener(Event.CHANGE, draw);
 			_data.addEventListener(NetWorldEvent.NODE_CREATED, drawNode);
 			_data.addEventListener(NetWorldEvent.EDGE_CREATED, drawEdge);
-			_data.addEventListener(NetWorldEvent.NETWORK_CREATED, drawNetwork);
-			_data.addEventListener(NetWorldEvent.NETWORK_DESTROYED, eraseNetwork);
+			_data.addEventListener(NetWorldEvent.NETWORK_CREATED, drawNetworks);
+			_data.addEventListener(NetWorldEvent.NETWORK_DESTROYED, eraseNetworks);
+			_data.addEventListener(NetWorldEvent.NETWORKS_CHANGED, drawNetworks);
 		}
 
 		public function draw(event : Event) : void {
 		}
 
-		public function eraseNetwork(event : NetWorldEvent) : void {
+		public function eraseNetworks(event : NetWorldEvent) : void {
 		}
 
-		public function drawNetwork(event : NetWorldEvent) : void {
+		public function drawNetworks(event : NetWorldEvent) : void {
 		}
 
 		public function drawEdge(event : NetWorldEvent) : void {

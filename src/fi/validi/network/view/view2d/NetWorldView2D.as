@@ -50,7 +50,7 @@ package fi.validi.network.view.view2d {
 			addChild(_numberOfNetworksField);
 		}
 
-		override public function drawNetwork(event : NetWorldEvent) : void {
+		override public function drawNetworks(event : NetWorldEvent) : void {
 			_numberOfNetworksField.text = String(_data.networks.length);
 		}
 		

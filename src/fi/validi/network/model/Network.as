@@ -1,9 +1,10 @@
 package fi.validi.network.model {
+	import flash.events.EventDispatcher;
 
 	/**
 	 * @author Juho Viitasalo
 	 */
-	public class Network implements INetwork {
+	public class Network extends EventDispatcher implements INetwork {
 		private static var _IDCounter : uint = 1;
 		private var _ID : uint;
 		private var _nodes : Vector.<INode>;
@@ -116,8 +117,13 @@ package fi.validi.network.model {
 			}
 		}
 		
-		public function toString() : String {
+		override public function toString() : String {
 			return String(ID);
 		}
+		
+		public function cascade() : void {
+			
+		}
+		
 	}
 }

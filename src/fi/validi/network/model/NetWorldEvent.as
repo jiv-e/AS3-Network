@@ -8,9 +8,10 @@ package fi.validi.network.model {
 		public static const EDGE_CREATED : String = "EDGE_CREATED";
 		public static const NETWORK_CREATED : String = "NETWORK_CREATED";
 		public static const NETWORK_DESTROYED : String = "NETWORK_DESTROYED";
+		public static const NETWORKS_CHANGED : String = "NETWORKS_CHANGED";
 		private var _netObject : INetObject;
 
-		public function NetWorldEvent(type : String, netObject : INetObject, bubble : Boolean = false, cancelable : Boolean = false) {
+		public function NetWorldEvent(type : String, netObject : INetObject = null, bubble : Boolean = false, cancelable : Boolean = false) {
 			_netObject = netObject;
 			super(type, bubble, cancelable);
 		}
@@ -18,11 +19,6 @@ package fi.validi.network.model {
 		public function get netObject() : INetObject {
 			return _netObject;
 		}
-
-		public function set netObject(netObject : INetObject) : void {
-			_netObject = netObject;
-		}
-		
 		
 	}
 }

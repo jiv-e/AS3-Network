@@ -1,11 +1,6 @@
 package fi.validi.network.model.model2d {
+	import fi.validi.network.model.NetWorldEvent;
 	import fi.validi.network.model.AbstractNode;
-	import fi.validi.network.model.INetObject;
-	import fi.validi.network.VectorOperations;
-	import fi.validi.network.model.INode;
-	import fi.validi.network.model.ConnectionType;
-	import fi.validi.network.model.IEdge;
-	import fi.validi.network.model.IEffect;
 	import fi.validi.network.model.INetwork;
 
 	/**
@@ -21,8 +16,7 @@ package fi.validi.network.model.model2d {
 			super(toNetworks);
 			_xProportional = xProportional;
 			_yProportional = yProportional;
-
-	
+			
 //			if(connectToEdge) {
 //				if(connectionType) {
 //					connect(connectToEdge, connectionType);					

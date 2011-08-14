@@ -6,5 +6,6 @@ package fi.validi.network.model {
 		public static const OUT : String = "out";
 		public static const IN : String = "in";
 		public static const INOUT : String = "inout";
+		public static const ALL : String = "ALL";
 	}
 }

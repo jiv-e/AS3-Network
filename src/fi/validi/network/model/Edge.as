@@ -1,10 +1,12 @@
 package fi.validi.network.model {
+	import fi.validi.network.VectorOperations;
+	import flash.events.EventDispatcher;
 	import flash.events.FullScreenEvent;
 
 	/**
 	 * @author Juho Viitasalo
 	 */
-	public class Edge implements IEdge {
+	public class Edge extends EventDispatcher implements IEdge {
 		
 		private static var _IDCounter : uint = 1;
 		private var _nodesIn : Vector.<INode>;
@@ -19,7 +21,7 @@ package fi.validi.network.model {
 				_IDCounter++;
 				if(inOut) {
 					_nodesInOut = inOut;
-					trace("Nodes " + inOut + " connected!")
+					trace("Nodes " + inOut + " connected!");
 				}
 				else _nodesInOut = new Vector.<INode>();
 				
@@ -36,10 +38,14 @@ package fi.validi.network.model {
 				_networks = new Vector.<INetwork>;
 				updateNodes();
 				switch(networkIDCascadeType) {
-					case NetworkIDCascadeType.ORDINALITY:
-						//Choose the network with smallest networkID for this edge and for the nodes
+					case NetworkIDCascadeType.ORDINALITY:					
+						//Choose the network with smallest networkID for this edge and for all
+						//the connected edges and nodes
 						var networkWithSmallestID : INetwork = findNetworkWithSmallestID(ConnectionType.INOUT);
+						//Add this edge to the network
 						addToNetwork(networkWithSmallestID);
+						//Get all the nodes and edges from the old network and move them to
+						//the new network.
 						var networkVector : Vector.<INetwork> = new Vector.<INetwork>();
 						networkVector.push(networkWithSmallestID);
 						setNodeNetworks(networkVector, ConnectionType.INOUT);			
@@ -57,6 +63,10 @@ package fi.validi.network.model {
 				trace("Error: Edge has to have at least one 'in to' and 'out from' node.");
 				
 			}
+		}
+
+		private function engulfNetwork(engulfer : INetwork, engulfed : INetwork) : void {
+			
 		}
 
 		private function updateNodes() : void {
@@ -106,6 +116,9 @@ package fi.validi.network.model {
 				case ConnectionType.INOUT:
 					return nodesInOut;
 					break;
+				case ConnectionType.ALL:
+					return nodesIn.concat(nodesOut, nodesInOut);
+					break;
 				default:
 					return null;
 			}
@@ -124,6 +137,19 @@ package fi.validi.network.model {
 				}
 			}
 			return networkWithSmallestID;
+		}
+		
+		private function get connectedNetworks() : Vector.<INetwork> {
+			var connectedNetworks : Vector.<INetwork> = new Vector.<INetwork>();
+			var nodes : Vector.<INode> = getNodesByType(ConnectionType.ALL);
+			for each (var node : INode in nodes) {
+				for each (var network : INetwork in node.networks) {
+					if(connectedNetworks.indexOf(network) == -1) {
+						connectedNetworks.push(network);				
+					}		
+				}
+			}
+			return connectedNetworks;
 		}
 		
 		public function destroy() : void {

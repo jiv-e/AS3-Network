@@ -1,17 +1,19 @@
 package fi.validi.network.model {
+	import flash.events.EventDispatcher;
 	import fi.validi.network.VectorOperations;
 	import fi.validi.network.model.model2d.Node2D;
 
 	/**
 	 * @author jiv
 	 */
-	public class AbstractNode implements INode {
+	public class AbstractNode extends EventDispatcher implements INode {
+		protected static var _IDCounter : uint = 1;
+		protected var _ID : uint;
+		protected var _networks : Vector.<INetwork>;
+		protected var _inEdges : Vector.<IEdge>;
+		protected var _outEdges : Vector.<IEdge>;
 		
-		private static var _IDCounter : uint = 1;
-		private var _ID : uint;
-		private var _networks : Vector.<INetwork>;
-		private var _inEdges : Vector.<IEdge>;
-		private var _outEdges : Vector.<IEdge>;
+		private var eventDispatcher : EventDispatcher;
 		
 		public function AbstractNode(toNetworks : Vector.<INetwork>) {
 			_ID = _IDCounter;
@@ -19,6 +21,9 @@ package fi.validi.network.model {
 			networks = toNetworks;
 			_inEdges = new Vector.<IEdge>();
 			_outEdges = new Vector.<IEdge>();
+			
+			eventDispatcher = new EventDispatcher();
+			
 			trace("Node " + _ID + " created to networks: " + networks[0]);
 		}
 
@@ -55,18 +60,14 @@ package fi.validi.network.model {
 		}
 
 		public function set networks(networks : Vector.<INetwork>) : void {
-			if(_networks) {
+			if (_networks && !VectorOperations.isEqual(Vector.<INetObject>(_networks), Vector.<INetObject>(networks))) {
 				var nodeRemovedFromNetworks : Vector.<INetwork> = Vector.<INetwork>(VectorOperations.difference(Vector.<INetObject>(_networks), Vector.<INetObject>(networks)));
 				trace("node removed from networks : " + nodeRemovedFromNetworks);
-				for each (var network : INetwork in nodeRemovedFromNetworks) {
-					if(network.nodes.length == 0) {
-						network = null;
-					}
-				}
+				dispatchEvent(new NodeEvent(NodeEvent.REMOVED_FROM_NETWORKS, Vector.<INetObject>(nodeRemovedFromNetworks)));
 			}
 			_networks = networks;
 		}
-		
+
 		public function get networkIDs() : Vector.<uint> {
 			var _networkIDs : Vector.<uint> = new Vector.<uint>();
 			for each (var network : INetwork in networks) {
@@ -105,7 +106,7 @@ package fi.validi.network.model {
 			return false;
 		}
 		
-		public function toString() : String {
+		override public function toString() : String {
 			return String(ID);
 		}
 
@@ -119,3 +120,4 @@ package fi.validi.network.model {
 
 	}
 }
+

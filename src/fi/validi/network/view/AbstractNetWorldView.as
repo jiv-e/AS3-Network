@@ -15,6 +15,7 @@ package fi.validi.network.view {
 			_data.addEventListener(Event.CHANGE, draw);
 			_data.addEventListener(NetWorldEvent.NODE_CREATED, draw);
 			_data.addEventListener(NetWorldEvent.EDGE_CREATED, draw);
+			_data.addEventListener(NetWorldEvent.NETWORKS_CHANGED, draw);
 		}
 
 		protected function draw(event : Event = null) : void {

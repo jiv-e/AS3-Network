@@ -1,6 +1,5 @@
 package fi.validi.network.model {
-	import flash.events.MouseEvent;
-	import flash.events.Event;
+	import fi.validi.network.VectorOperations;
 	import flash.events.EventDispatcher;
 
 	/**
@@ -88,12 +87,23 @@ package fi.validi.network.model {
 		protected function initNodeCreation(node : INode) : INode {			
 			_nodes.push(node);
 			dispatchEvent(new NetWorldEvent(NetWorldEvent.NODE_CREATED, node));
+			node.addEventListener(NodeEvent.REMOVED_FROM_NETWORKS, nodeRemovedFromNetworksListener);
 			return node;
 		}
 		
-		private function destroyNetwork(network : INetwork) : void {
-			
+		private function nodeRemovedFromNetworksListener(event : NodeEvent) : void {
+			if(event.netObjects) {
+				_networks = Vector.<INetwork>(VectorOperations.difference(Vector.<INetObject>(_networks), event.netObjects));
+				dispatchEvent(new NetWorldEvent(NetWorldEvent.NETWORKS_CHANGED));
+			}
 		}
+		
+		private function destroyNetwork(network : INetwork) : void {
+			var createdNetwork : Network = new Network();
+			_networks.push(createdNetwork);
+			dispatchEvent(new NetWorldEvent(NetWorldEvent.NETWORK_CREATED, createdNetwork));
+		}
+		
 		
 
 	}
