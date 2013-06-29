@@ -6,13 +6,24 @@ package fi.validi.network.model {
 	 */
 	public class Network extends EventDispatcher implements INetwork {
 		private static var _IDCounter : uint = 1;
+		private static var _largest : INetwork;
+		private static var _members : Vector.<INetwork>;
 		private var _ID : uint;
 		private var _nodes : Vector.<INode>;
 		private var _edges : Vector.<IEdge>;
+		private var _netWorld : INetWorld;
 		
-		public function Network() {
+		public function Network(toNetWorld : INetWorld) {
 			_ID = _IDCounter;
 			_IDCounter++;
+			if(!_members) {
+				_members = new Vector.<INetwork>;
+			}
+			_members.push(this);
+			if(!largest) {
+				_largest = this;
+			}
+			_netWorld = toNetWorld;
 			_edges = new Vector.<IEdge>;
 			_nodes = new Vector.<INode>;
 			trace("Network created (ID: " + _ID + ")");
@@ -57,6 +68,11 @@ package fi.validi.network.model {
 			if(nodes.indexOf(node) == -1) {
 				nodes.push(node);
 				trace("Node " + node.ID + " added to network " + this.ID + ".");
+				//Check if this is the largest network
+				if(this.nodes.length > largest.nodes.length) {
+					_largest = this;
+					//netWorld.dispatchEvent(new NetWorldEvent(NetWorldEvent.LARGEST_NETWORK_CHANGED));
+				}
 				
 			}
 			else {
@@ -123,6 +139,46 @@ package fi.validi.network.model {
 		
 		public function cascade() : void {
 			
+		}
+
+		public function get networks() : Vector.<INetwork> {
+			return null;
+		}
+		
+		public function set networks(networks : Vector.<INetwork>) : void {
+			
+		}
+
+		public function addToNetwork(network : INetwork) : void {
+		}
+
+		public function addToNetworks(networks : Vector.<INetwork>) : void {
+		}
+
+		public function activate() : void {
+			for each (var node : INode in nodes) {
+				node.activate();
+			}
+		}
+
+		public function deactivate() : void {
+			for each (var node : INode in nodes) {
+				node.deactivate();
+			}
+		}
+
+		public function get netWorld() : INetWorld {
+			return _netWorld;
+		}
+
+		static public function get largest() : INetwork {
+			return _largest;
+		}
+		
+		static public function deactivateAll() : void {
+			for each (var network : INetwork in _members) {
+				network.deactivate();
+			}
 		}
 		
 	}

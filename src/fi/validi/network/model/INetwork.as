@@ -7,6 +7,7 @@ package fi.validi.network.model {
 		function get numberOfEdges() : uint;
 		function get nodes() : Vector.<INode>;
 		function get edges() : Vector.<IEdge>;
+		function get netWorld() : INetWorld;
 
 		function addNode(node : INode) : void;
 		function removeNode(node : INode) : Boolean;
@@ -15,5 +16,6 @@ package fi.validi.network.model {
 		function removeEdge(edge : IEdge) : Boolean;
 		function removeAllEdges(edge : IEdge) : void;
 		function toString() : String;
+
 	}
 }

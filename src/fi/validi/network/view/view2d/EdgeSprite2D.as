@@ -1,6 +1,7 @@
 package fi.validi.network.view.view2d {
 	import fi.validi.network.model.IEdge;
 	import fi.validi.network.model.model2d.INode2D;
+	import fi.validi.network.view.INetWorldView;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -34,9 +35,11 @@ package fi.validi.network.view.view2d {
 		private var _stroke : Shape;
 		
 		private var _edgeData : IEdge;
+		private var _worldView : INetWorldView;
 		
-		public function EdgeSprite2D(edge : IEdge, allowDublicateEdges : Boolean = false) {
+		public function EdgeSprite2D(edge : IEdge, worldView : INetWorldView, allowDublicateEdges : Boolean = false) {
 			_edgeData = edge;
+			_worldView = worldView;
 			if (stage) draw();
 			else addEventListener(Event.ADDED_TO_STAGE, init);
 //			if (allowDublicateEdges || fromNode.neighbourNodes.indexOf(toNode)==-1) {
@@ -70,18 +73,18 @@ package fi.validi.network.view.view2d {
 				var j : uint = 0;
 				if(nodesIn.length > 1) i++;
 				else if(nodesOut.length > 1) j++;
-				var inPoint : Point = new Point(nodesIn[i].xProportional*stage.width, nodesIn[i].yProportional*stage.width);
-				var outPoint : Point = new Point(nodesOut[j].xProportional*stage.width, nodesOut[j].yProportional*stage.height);
+				var inPoint : Point = new Point(nodesIn[i].xProportional*(_worldView.container.width-2*NodeSprite2D.radius)+NodeSprite2D.radius, nodesIn[i].yProportional*(_worldView.container.height-2*NodeSprite2D.radius)+NodeSprite2D.radius);
+				var outPoint : Point = new Point(nodesOut[j].xProportional*(_worldView.container.width-2*NodeSprite2D.radius)+NodeSprite2D.radius, nodesOut[j].yProportional*(_worldView.container.height-2*NodeSprite2D.radius)+NodeSprite2D.radius);
 			
 			
 				var middlePoint : Point = Point.interpolate(outPoint, inPoint, 0.5);
 
 				for each (var nodeOut : INode2D in nodesOut) {
-					drawStroke(new Point(nodeOut.xProportional*stage.width,nodeOut.yProportional*stage.width), middlePoint, OUT);
+					drawStroke(new Point(nodeOut.xProportional*(_worldView.container.width-2*NodeSprite2D.radius)+NodeSprite2D.radius,nodeOut.yProportional*(_worldView.container.height-2*NodeSprite2D.radius)+NodeSprite2D.radius), middlePoint, OUT);
 				}
 	
 				for each (var nodeIn : INode2D in nodesIn) {
-					drawStroke(new Point(nodeIn.xProportional*stage.width,nodeIn.yProportional*stage.width), middlePoint, IN);
+					drawStroke(new Point(nodeIn.xProportional*(_worldView.container.width-2*NodeSprite2D.radius)+NodeSprite2D.radius,nodeIn.yProportional*(_worldView.container.height-2*NodeSprite2D.radius)+NodeSprite2D.radius), middlePoint, IN);
 				}
 			}
 //			_fromNode.addEdge(this);
@@ -94,9 +97,11 @@ package fi.validi.network.view.view2d {
 		private function drawStrokeToSelf(node : INode2D) : void {
 			_stroke = new Shape();
 			_stroke.graphics.lineStyle(IN_THICKNESS, IN_COLOR, IN_ALPHA);
-			_stroke.graphics.drawCircle(node.xProportional*stage.width-NodeSprite2D.radius/1.5, node.yProportional*stage.height-NodeSprite2D.radius/1.5, NodeSprite2D.radius/1.5);
+			var nodeX : Number = node.xProportional*(_worldView.container.width-2*NodeSprite2D.radius)+NodeSprite2D.radius;
+			var nodeY : Number = node.yProportional*(_worldView.container.height-2*NodeSprite2D.radius)+NodeSprite2D.radius;
+			_stroke.graphics.drawCircle(nodeX-NodeSprite2D.radius/1.5, nodeY-NodeSprite2D.radius/1.5, NodeSprite2D.radius/1.5);
 			_stroke.graphics.lineStyle(OUT_THICKNESS, OUT_COLOR, OUT_ALPHA);
-			_stroke.graphics.drawCircle(node.xProportional*stage.width-NodeSprite2D.radius/1.5, node.yProportional*stage.height-NodeSprite2D.radius/1.5, NodeSprite2D.radius/1.5);
+			_stroke.graphics.drawCircle(nodeX-NodeSprite2D.radius/1.5, nodeY-NodeSprite2D.radius/1.5, NodeSprite2D.radius/1.5);
 		
 		}
 

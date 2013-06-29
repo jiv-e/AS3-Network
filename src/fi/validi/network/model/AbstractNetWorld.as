@@ -5,7 +5,7 @@ package fi.validi.network.model {
 	/**
 	 * @author jiv
 	 */
-	public class AbstractNetWorld extends EventDispatcher {
+	public class AbstractNetWorld extends EventDispatcher implements INetWorld {
 		protected var _networks : Vector.<INetwork>;
 		protected var _nodes : Vector.<INode>;
 		protected var _edges : Vector.<IEdge>;
@@ -21,11 +21,27 @@ package fi.validi.network.model {
 			var createdEdge : Edge = new Edge(nodesInOut, nodesIn, nodesOut, NetworkIDCascadeType.ORDINALITY);
 			_edges.push(createdEdge);
 			dispatchEvent(new NetWorldEvent(NetWorldEvent.EDGE_CREATED, createdEdge));
+			
+			//Order networks connected to this edge by ID - smallest ID first 					
+			var orderedNetworks : Vector.<INetwork> = createdEdge.connectedNetworks.sort(VectorOperations.compare);
+			
+			//Add this edge to some network
+			createdEdge.addToNetwork(orderedNetworks[0]);
+			
+			//If this edge connects different networks engulf the others
+			if (orderedNetworks.length > 1) {
+				engulfNetworks(orderedNetworks[0], Vector.<INetwork>(orderedNetworks.slice(1)));
+			}
+			
 			return createdEdge;
 		}
 		
+		public function destroyEdge(edge : IEdge) : void {
+			edge.destroy();
+		}
+		
 		public function createNetwork() : INetwork {
-			var createdNetwork : Network = new Network();
+			var createdNetwork : Network = new Network(this);
 			_networks.push(createdNetwork);
 			dispatchEvent(new NetWorldEvent(NetWorldEvent.NETWORK_CREATED, createdNetwork));
 			return createdNetwork;
@@ -78,9 +94,10 @@ package fi.validi.network.model {
 			return okNumOfEdges;
 		}
 
-		protected function createSingleNetworkVector() : Vector.<INetwork> {
+		protected function createSingleNetworkVector(network : INetwork = null) : Vector.<INetwork> {
 			var networkVector : Vector.<INetwork> = new Vector.<INetwork>();
-			networkVector.push(createNetwork());
+			if(network != null) networkVector.push(network);
+			else networkVector.push(createNetwork());
 			return networkVector;
 		}
 
@@ -99,12 +116,25 @@ package fi.validi.network.model {
 		}
 		
 		private function destroyNetwork(network : INetwork) : void {
-			var createdNetwork : Network = new Network();
-			_networks.push(createdNetwork);
-			dispatchEvent(new NetWorldEvent(NetWorldEvent.NETWORK_CREATED, createdNetwork));
+
 		}
 		
+		private function engulfNetwork(engulfer : INetwork, engulfed : INetwork) : void {
+			for each (var edge : IEdge in engulfed.edges) {
+				 edge.networks = new Vector.<INetwork>();
+				 edge.addToNetwork(engulfer);
+			}
+			for each (var node : INode in engulfed.nodes) {
+				node.networks = createSingleNetworkVector(engulfer);
+			}
+			trace("Network " + engulfer + " engulfed the network " + engulfed + ".");
+		}
 		
+		private function engulfNetworks(engulfer : INetwork, engulfed : Vector.<INetwork>) : void {
+			for each (var network : INetwork in engulfed) {
+				engulfNetwork(engulfer, network);
+			}
+		}
 
 	}
 }

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="com.powerflasher.fdt.ui.MxmlcGroup">
 <stringAttribute key="ADL_ARGUMENTS" value=""/>
+<stringAttribute key="ADL_DESCRIPTOR_FILE" value=""/>
+<intAttribute key="AIR_VIEWER_CONF" value="0"/>
 <stringAttribute key="APP_ARGUMENTS" value=""/>
-<stringAttribute key="ARGUMENTS" value="-static-link-runtime-shared-libraries=true&#10;-target-player={playerVersion}&#10;-library-path+=&quot;{flexSDK}/frameworks/locale/en_US&quot;&#10;-default-size=800,800&#10;-debug=true"/>
-<booleanAttribute key="KILL_PREVIUOS_VIEWER" value="true"/>
+<stringAttribute key="ARGUMENTS" value="-static-link-runtime-shared-libraries=true&#10;-target-player={playerVersion}&#10;-library-path+=&quot;{flexSDK}/frameworks/locale/en_US&quot;&#10;-default-size=800,800"/>
+<booleanAttribute key="KILL_PREVIOUS_VIEWER" value="true"/>
 <stringAttribute key="LAUNCHER_DEPENDENCIES" value="[Self]"/>
 <stringAttribute key="MAIN_CLASS" value="src/Main.as"/>
+<stringAttribute key="MOBILE_PRESET" value=""/>
 <stringAttribute key="OUTPUT" value="bin/Main.swf"/>
 <booleanAttribute key="PASS_CP" value="true"/>
 <booleanAttribute key="PASS_EXTERNS" value="false"/>

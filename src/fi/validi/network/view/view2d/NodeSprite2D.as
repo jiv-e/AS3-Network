@@ -1,53 +1,11 @@
 package fi.validi.network.view.view2d {
-	import flash.events.Event;
-	import com.greensock.OverwriteManager;
-	import com.greensock.TimelineLite;
-	import com.greensock.TimelineMax;
-	import com.greensock.TweenAlign;
-	import com.greensock.TweenLite;
-	import com.greensock.TweenMax;
-	import com.greensock.TweenNano;
-	import com.greensock.plugins.AutoAlphaPlugin;
-	import com.greensock.plugins.BevelFilterPlugin;
-	import com.greensock.plugins.BezierPlugin;
-	import com.greensock.plugins.BezierThroughPlugin;
-	import com.greensock.plugins.BlurFilterPlugin;
-	import com.greensock.plugins.CacheAsBitmapPlugin;
-	import com.greensock.plugins.CirclePath2DPlugin;
-	import com.greensock.plugins.ColorMatrixFilterPlugin;
-	import com.greensock.plugins.ColorTransformPlugin;
-	import com.greensock.plugins.DropShadowFilterPlugin;
-	import com.greensock.plugins.EndArrayPlugin;
-	import com.greensock.plugins.EndVectorPlugin;
-	import com.greensock.plugins.FilterPlugin;
-	import com.greensock.plugins.FrameBackwardPlugin;
-	import com.greensock.plugins.FrameForwardPlugin;
-	import com.greensock.plugins.FrameLabelPlugin;
-	import com.greensock.plugins.FramePlugin;
-	import com.greensock.plugins.GlowFilterPlugin;
-	import com.greensock.plugins.HexColorsPlugin;
-	import com.greensock.plugins.QuaternionsPlugin;
-	import com.greensock.plugins.RemoveTintPlugin;
-	import com.greensock.plugins.RoundPropsPlugin;
-	import com.greensock.plugins.ScalePlugin;
-	import com.greensock.plugins.ScrollRectPlugin;
-	import com.greensock.plugins.SetActualSizePlugin;
-	import com.greensock.plugins.SetSizePlugin;
-	import com.greensock.plugins.ShortRotationPlugin;
-	import com.greensock.plugins.SoundTransformPlugin;
-	import com.greensock.plugins.StageQualityPlugin;
-	import com.greensock.plugins.TintPlugin;
-	import com.greensock.plugins.TransformMatrixPlugin;
-	import com.greensock.plugins.TweenPlugin;
-	import com.greensock.plugins.VisiblePlugin;
-	import com.greensock.plugins.VolumePlugin;
 	import fi.validi.network.model.INetwork;
-	import fi.validi.network.model.INode;
-	import fi.validi.network.model.Network;
+	import fi.validi.network.model.NetWorldEvent;
 	import fi.validi.network.model.model2d.INode2D;
-	import fi.validi.network.model.model2d.Node2D;
+	import fi.validi.network.view.INetWorldView;
 	import flash.display.Shape;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.ColorTransform;
 	import flash.text.TextField;
@@ -56,7 +14,7 @@ package fi.validi.network.view.view2d {
 	 * @author Juho Viitasalo
 	 */
 	public class NodeSprite2D extends Sprite {
-		private var _oiriginalFillColor:uint = 0xFFCC00;
+		private var _originalFillColor:uint = 0xFFCC00;
 		private var _fillColor:uint = 0xFFCC00;
         private var _mouseOverColor:uint = 0xFF0000;
         private var _strokeColor:uint = 0x000000;
@@ -77,12 +35,24 @@ package fi.validi.network.view.view2d {
 		
 		private var textField : TextField;
 		private var _withLabel : Boolean;
+		private var _worldView : INetWorldView;
 		
-		public function NodeSprite2D(node : INode2D, withLabel : Boolean = false) {
+		public function NodeSprite2D(node : INode2D, worldView : INetWorldView, withLabel : Boolean = false) {
+			_worldView = worldView;
 			_nodeData = node;
 			_withLabel = withLabel;
+			_nodeData.addEventListener(NetWorldEvent.ACTIVATED, activatedListener);
+			_nodeData.addEventListener(NetWorldEvent.DEACTIVATED, deactivateListener);
 			if (stage) draw();
 			else addEventListener(Event.ADDED_TO_STAGE, init);			
+		}
+
+		private function activatedListener(event : NetWorldEvent) : void {
+			activate();
+		}
+
+		private function deactivateListener(event : NetWorldEvent) : void {
+			deactivate();
 		}
 
 		private function init(event : Event) : void {
@@ -91,8 +61,8 @@ package fi.validi.network.view.view2d {
 		}
 
 		private function draw() : void {
-			this.x = _nodeData.xProportional*stage.width;
-			this.y = _nodeData.yProportional*stage.height;
+			this.x = _nodeData.xProportional*(_worldView.container.width-2*_radius)+_radius;
+			this.y = _nodeData.yProportional*(_worldView.container.height-2*_radius)+_radius;
 			drawCircleFill();
 			drawCircleStroke();
 			_colorTransform = new ColorTransform();
@@ -109,19 +79,30 @@ package fi.validi.network.view.view2d {
 		
 		private function mouseOutHandler(e:MouseEvent):void {
 			removeText();
-			deactivate();
+			deactivateNetworks();
+		}
+
+		private function deactivateNetworks() : void {
+			for each (var network : INetwork in _nodeData.networks) {
+				network.deactivate();				
+			}
 		}
 
 		
 		private function mouseOverHandler(e:MouseEvent):void {
 			addText(_nodeData.networkIDs.join());
-			
-			activate();
+			activateNetworks();
+		}
+
+		private function activateNetworks() : void {
+			for each (var network : INetwork in _nodeData.networks) {
+				network.activate();				
+			}
 		}
 		
 		private function drawCircleFill():void {
             _fill = new Shape();
-            _fill.graphics.beginFill(_oiriginalFillColor);
+            _fill.graphics.beginFill(_originalFillColor);
             _fill.graphics.drawCircle(0, 0, _radius);
             _fill.graphics.endFill();
             addChild(_fill);
@@ -189,7 +170,7 @@ package fi.validi.network.view.view2d {
 		
 		private function deactivate() : void {
 			//TweenLite.to(this, _mouseOutDuration, { scaleX:1, scaleY:1, hexColors: { currentFillColor: _fillColor }} );
-			fillColor = _oiriginalFillColor;
+			fillColor = _originalFillColor;
 //			for (var i : int = 0; i < _edges.length; i++) {
 //				_edges[i].active = false;
 //			}

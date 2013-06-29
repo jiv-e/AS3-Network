@@ -2,8 +2,10 @@
 <AS3Classpath>
     <AS3LibraryFolder>libs</AS3LibraryFolder>
     <AS3Classpath generateProblems="false" sdkBased="true" type="lib" useAsSharedCode="false">frameworks/libs/player/{playerVersion}/playerglobal.swc</AS3Classpath>
-    <AS3Classpath generateProblems="false" sdkBased="true" type="lib" useAsSharedCode="false">frameworks/libs/flex.swc</AS3Classpath>
     <AS3Classpath generateProblems="true" sdkBased="false" type="source" useAsSharedCode="false">src</AS3Classpath>
     <AS3Classpath generateProblems="false" sdkBased="false" type="source" useAsSharedCode="false">AS3Classes</AS3Classpath>
     <AS3Classpath generateProblems="false" sdkBased="false" type="lib" useAsSharedCode="false">assets/MinimalComps_0_9_10.swc</AS3Classpath>
+    <AS3Classpath generateProblems="false" sdkBased="true" type="lib" useAsSharedCode="false">frameworks/libs/core.swc</AS3Classpath>
+    <AS3Classpath generateProblems="false" sdkBased="false" type="lib" useAsSharedCode="false">libs/flare.swc</AS3Classpath>
+    <AS3Classpath generateProblems="false" sdkBased="false" type="source" useAsSharedCode="false">Flare</AS3Classpath>
 </AS3Classpath>

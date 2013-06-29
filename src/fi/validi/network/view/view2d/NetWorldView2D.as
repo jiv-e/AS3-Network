@@ -1,4 +1,8 @@
 package fi.validi.network.view.view2d {
+	import fi.validi.network.model.Network;
+	import fi.validi.network.view.INetWorldView;
+	import fi.validi.network.view.AbstractNetWorldView;
+	import flare.animate.Tween;
 	import com.greensock.OverwriteManager;
 	import flash.text.TextField;
 	import fi.validi.network.model.NetWorldEvent;
@@ -11,12 +15,14 @@ package fi.validi.network.view.view2d {
 	/**
 	 * @author Juho Viitasalo
 	 */
-	public class NetWorldView2D extends AbstractNetWorldView2D {
+	public class NetWorldView2D extends AbstractNetWorldView implements INetWorldView {
+
 		private var _nodesLayer : Sprite;
 		private var _edgesLayer : Sprite;
 		
 		private var _numberOfNetworksField : TextField;
-		
+		private var _networldContainer : Sprite;
+
 		public function NetWorldView2D(data : NetWorld2D) {
 			super(data);
 			init();
@@ -48,6 +54,7 @@ package fi.validi.network.view.view2d {
 			_numberOfNetworksField.scaleX = 2;
 			_numberOfNetworksField.scaleY = 2;
 			addChild(_numberOfNetworksField);
+			
 		}
 
 		override public function drawNetworks(event : NetWorldEvent) : void {
@@ -55,12 +62,17 @@ package fi.validi.network.view.view2d {
 		}
 		
 		override public function drawNode(event : NetWorldEvent) : void {
-			_nodesLayer.addChild(new NodeSprite2D(INode2D(event.netObject)));
+			_nodesLayer.addChild(new NodeSprite2D(INode2D(event.netObject),this));
 		}
 
 		override public function drawEdge(event : NetWorldEvent) : void {
-			_edgesLayer.addChild(new EdgeSprite2D(IEdge(event.netObject)));	
+			_edgesLayer.addChild(new EdgeSprite2D(IEdge(event.netObject),this));
 		}
 		
+		override protected function handleLargestNetworkChange(event : NetWorldEvent) : void {
+			Network.deactivateAll();
+			Network.largest.activate();
+		}
+
 	}
 }

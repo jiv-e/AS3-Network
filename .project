@@ -20,5 +20,10 @@
 			<type>2</type>
 			<locationURI>AS3Classes</locationURI>
 		</link>
+		<link>
+			<name>Flare</name>
+			<type>2</type>
+			<locationURI>Flare</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

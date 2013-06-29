@@ -12,31 +12,32 @@ package fi.validi.network.model {
 		protected var _networks : Vector.<INetwork>;
 		protected var _inEdges : Vector.<IEdge>;
 		protected var _outEdges : Vector.<IEdge>;
+		protected var _netWorld : INetWorld;
 		
 		private var eventDispatcher : EventDispatcher;
 		
-		public function AbstractNode(toNetworks : Vector.<INetwork>) {
+		public function AbstractNode(toNetWorld : INetWorld, toNetworks : Vector.<INetwork>) {
 			_ID = _IDCounter;
 			_IDCounter++;
+			_netWorld = toNetWorld;
 			networks = toNetworks;
 			_inEdges = new Vector.<IEdge>();
 			_outEdges = new Vector.<IEdge>();
 			
 			eventDispatcher = new EventDispatcher();
 			
-			trace("Node " + _ID + " created to networks: " + networks[0]);
+			trace("Node " + _ID + " created to net world " + netWorld + " and networks: " + networks[0]);
 		}
 
-		private function addToNetworks(networks : Vector.<INetwork>) : void {
+		public function addToNetworks(networks : Vector.<INetwork>) : void {
 			for each (var network : INetwork in networks) {
-				network.addNode(this);
 				addToNetwork(network);
 			}
 		}
 
-		private function addToNetwork(network : INetwork) : void {
+		public function addToNetwork(network : INetwork) : void {
 			network.addNode(this);
-			//networks = Vector.<INetwork>(networks.push(network));
+			networks.push(network);
 		}
 
 		public function detatch() : void {
@@ -65,7 +66,8 @@ package fi.validi.network.model {
 				trace("node removed from networks : " + nodeRemovedFromNetworks);
 				dispatchEvent(new NodeEvent(NodeEvent.REMOVED_FROM_NETWORKS, Vector.<INetObject>(nodeRemovedFromNetworks)));
 			}
-			_networks = networks;
+			_networks = new Vector.<INetwork>();
+			addToNetworks(networks);
 		}
 
 		public function get networkIDs() : Vector.<uint> {
@@ -107,7 +109,7 @@ package fi.validi.network.model {
 		}
 		
 		override public function toString() : String {
-			return String(ID);
+			return String(super.toString() + " ID: " + ID);
 		}
 
 		public function get inEdges() : Vector.<IEdge> {
@@ -116,6 +118,18 @@ package fi.validi.network.model {
 
 		public function get outEdges() : Vector.<IEdge> {
 			return _outEdges;
+		}
+
+		public function activate() : void {
+			dispatchEvent(new NetWorldEvent(NetWorldEvent.ACTIVATED, this));
+		}
+
+		public function deactivate() : void {
+			dispatchEvent(new NetWorldEvent(NetWorldEvent.DEACTIVATED, this));
+		}
+
+		public function get netWorld() : INetWorld {
+			return _netWorld;
 		}
 
 	}

@@ -1,7 +1,6 @@
 package fi.validi.network.model {
 	import fi.validi.network.VectorOperations;
 	import flash.events.EventDispatcher;
-	import flash.events.FullScreenEvent;
 
 	/**
 	 * @author Juho Viitasalo
@@ -37,27 +36,29 @@ package fi.validi.network.model {
 				
 				_networks = new Vector.<INetwork>;
 				updateNodes();
-				switch(networkIDCascadeType) {
-					case NetworkIDCascadeType.ORDINALITY:					
-						//Choose the network with smallest networkID for this edge and for all
-						//the connected edges and nodes
-						var networkWithSmallestID : INetwork = findNetworkWithSmallestID(ConnectionType.INOUT);
-						//Add this edge to the network
-						addToNetwork(networkWithSmallestID);
-						//Get all the nodes and edges from the old network and move them to
-						//the new network.
-						var networkVector : Vector.<INetwork> = new Vector.<INetwork>();
-						networkVector.push(networkWithSmallestID);
-						setNodeNetworks(networkVector, ConnectionType.INOUT);			
-						break;
-					case NetworkIDCascadeType.CARDINALITY:
-					
-						break;
-					case NetworkIDCascadeType.UNION:
-					
-						break;
-					default:
-				}			
+
+//				switch(networkIDCascadeType) {
+//					case NetworkIDCascadeType.ORDINALITY:
+//					
+//						//Choose the network with smallest networkID for this edge and for all
+//						//the connected edges and nodes
+//						var networkWithSmallestID : INetwork = findNetworkWithSmallestID(ConnectionType.INOUT);
+//						//Add this edge to the network
+//						addToNetwork(networkWithSmallestID);
+//						//Get all the nodes and edges from the old network and move them to
+//						//the new network.
+//						var networkVector : Vector.<INetwork> = new Vector.<INetwork>();
+//						networkVector.push(networkWithSmallestID);
+//						setNodeNetworks(networkVector, ConnectionType.INOUT);			
+//						break;
+//					case NetworkIDCascadeType.CARDINALITY:
+//					
+//						break;
+//					case NetworkIDCascadeType.UNION:
+//					
+//						break;
+//					default:
+//				}			
 			}
 			else {
 				trace("Error: Edge has to have at least one 'in to' and 'out from' node.");
@@ -81,6 +82,12 @@ package fi.validi.network.model {
 		public function addToNetwork(network : INetwork) : void {
 			_networks.push(network);
 			network.addEdge(this);
+		}
+		
+		public function addToNetworks(networks : Vector.<INetwork>) : void {
+			for each (var network : INetwork in networks) {
+				addToNetwork(network);
+			}			
 		}
 		
 		public function removeFromNetwork(network : INetwork) : Boolean {
@@ -139,7 +146,7 @@ package fi.validi.network.model {
 			return networkWithSmallestID;
 		}
 		
-		private function get connectedNetworks() : Vector.<INetwork> {
+		public function get connectedNetworks() : Vector.<INetwork> {
 			var connectedNetworks : Vector.<INetwork> = new Vector.<INetwork>();
 			var nodes : Vector.<INode> = getNodesByType(ConnectionType.ALL);
 			for each (var node : INode in nodes) {
@@ -216,6 +223,16 @@ package fi.validi.network.model {
 			if(nodesInOut[1] || (nodesIn[0] && nodesOut[0])) { 
 				_nodesInOut = nodesInOut;
 			} else trace("Error: Edge has to have at least one 'in to' and 'out from' node.");
+		}
+
+		public function set networks(networks : Vector.<INetwork>) : void {	
+			_networks = networks;
+		}
+
+		public function activate() : void {
+		}
+
+		public function deactivate() : void {
 		}
 		
 		

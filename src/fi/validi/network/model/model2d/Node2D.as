@@ -1,4 +1,5 @@
 package fi.validi.network.model.model2d {
+	import fi.validi.network.model.INetWorld;
 	import fi.validi.network.model.NetWorldEvent;
 	import fi.validi.network.model.AbstractNode;
 	import fi.validi.network.model.INetwork;
@@ -12,8 +13,8 @@ package fi.validi.network.model.model2d {
 		private var _xProportional : Number;
 		private var _yProportional : Number;
 		
-		public function Node2D(xProportional : Number, yProportional : Number, toNetworks : Vector.<INetwork>) {
-			super(toNetworks);
+		public function Node2D(xProportional : Number, yProportional : Number, toNetWorld : INetWorld, toNetworks : Vector.<INetwork>) {
+			super(toNetWorld, toNetworks);
 			_xProportional = xProportional;
 			_yProportional = yProportional;
 			
